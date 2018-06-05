@@ -24,7 +24,7 @@ package co.za.bluemarble.data;
  * obtained from the server, by using the remote data source only if the local database doesn't
  * exist or is empty.
  */
-public class TasksRepository implements TasksDataSource {
+public class EpicRepository implements EpicDataSource {
 
 
 }

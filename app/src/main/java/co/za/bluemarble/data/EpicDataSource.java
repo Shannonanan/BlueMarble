@@ -26,7 +26,7 @@ import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfo;
  * For example, when a new task is created, it's synchronously stored in cache but usually every
  * operation on database or network should be executed in a different thread.
  */
-public interface TasksDataSource {
+public interface EpicDataSource {
 
     interface LoadTasksCallback {
 
