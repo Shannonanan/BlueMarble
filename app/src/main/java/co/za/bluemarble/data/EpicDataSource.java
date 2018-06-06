@@ -17,6 +17,8 @@
 package co.za.bluemarble.data;
 import java.util.List;
 import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfo;
+import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoSchema;
+import io.reactivex.Observable;
 
 /**
  * Main entry point for accessing tasks data.
@@ -41,5 +43,10 @@ public interface EpicDataSource {
 
         void onDataNotAvailable();
     }
+
+    /**
+     * Get an {@link Observable} which will emit a List of {@link EarthInfo}.
+     */
+    Observable<List<EarthInfo>> getEarthInfo(String date);
 
 }
