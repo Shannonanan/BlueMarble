@@ -12,6 +12,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+
 public class EpicRemoteDataSource implements EpicDataSource {
 
 
@@ -52,6 +53,11 @@ public class EpicRemoteDataSource implements EpicDataSource {
 
     @Override
     public void saveTask(EarthInfo marbles) {
+
+    }
+
+    @Override
+    public void refreshTasks() {
 
     }
 
