@@ -17,53 +17,49 @@ import io.reactivex.schedulers.Schedulers;
  * By convention each UseCase implementation will return the result using a {@link DisposableObserver}
  * that will execute its job in a background thread and will post the result in the UI thread.
  */
-public abstract class UseCase<T, Params> {
+public abstract class UseCase< Q extends UseCase.RequestValues, P extends UseCase.ResponseValue> {
 
-    private final ThreadExecutor threadExecutor;
-    private final PostExecutionThread postExecutionThread;
-    private final CompositeDisposable disposables;
+    private Q mRequestValues;
 
-    public UseCase(ThreadExecutor threadExecutor, PostExecutionThread postExecutionThread) {
-        this.threadExecutor = threadExecutor;
-        this.postExecutionThread = postExecutionThread;
-        this.disposables = new CompositeDisposable();
+    private UseCaseCallback<P> mUseCaseCallback;
+
+    public void setRequestValues(Q requestValues) {
+        mRequestValues = requestValues;
+    }
+
+    public Q getRequestValues() {
+        return mRequestValues;
+    }
+
+    public UseCaseCallback<P> getUseCaseCallback() {
+        return mUseCaseCallback;
+    }
+
+    public void setUseCaseCallback(UseCaseCallback<P> useCaseCallback) {
+        mUseCaseCallback = useCaseCallback;
+    }
+
+    void run() {
+        executeUseCase(mRequestValues);
+    }
+
+    protected abstract void executeUseCase(Q requestValues);
+
+    /**
+     * Data passed to a request.
+     */
+    public interface RequestValues {
     }
 
     /**
-     * Builds an {@link Observable} which will be used when executing the current {@link UseCase}.
+     * Data received from a request.
      */
-    public abstract Observable<T> buildUseCaseObservable(Params params);
-
-    /**
-     * Executes the current use case.
-     *
-     * @param observer {@link DisposableObserver} which will be listening to the observable build
-     * by {@link #buildUseCaseObservable(Params)} ()} method.
-     * @param params Parameters (Optional) used to build/execute this use case.
-     */
-    public void execute(DisposableObserver<T> observer, Params params) {
-//        Preconditions.checkNotNull(observer);
-        final Observable<T> observable = this.buildUseCaseObservable(params)
-                .subscribeOn(Schedulers.from(threadExecutor))
-                .observeOn(postExecutionThread.getScheduler());
-        addDisposable(observable.subscribeWith(observer));
+    public interface ResponseValue {
     }
 
-    /**
-     * Dispose from current {@link CompositeDisposable}.
-     */
-    public void dispose() {
-        if (!disposables.isDisposed()) {
-            disposables.dispose();
-        }
-    }
+    public interface UseCaseCallback<R> {
+        void onSuccess(R response);
 
-    /**
-     * Dispose from current {@link CompositeDisposable}.
-     */
-    private void addDisposable(Disposable disposable) {
-//        Preconditions.checkNotNull(disposable);
-//        Preconditions.checkNotNull(disposables);
-        disposables.add(disposable);
+        void onError();
     }
 }

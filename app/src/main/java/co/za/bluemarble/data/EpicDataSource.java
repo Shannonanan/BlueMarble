@@ -30,16 +30,16 @@ import io.reactivex.Observable;
  */
 public interface EpicDataSource {
 
-    interface LoadTasksCallback {
+    interface LoadInfoCallback {
 
-        void onImageLoaded(List<EarthInfo> info);
+        void onDataLoaded(List<EarthInfo> info);
 
         void onDataNotAvailable();
     }
 
-    interface GetTaskCallback {
+    interface GetInfoCallback {
 
-        void onImageLoaded(EarthInfo info);
+        void onInfoLoaded(EarthInfo info);
 
         void onDataNotAvailable();
     }
@@ -47,6 +47,10 @@ public interface EpicDataSource {
     /**
      * Get an {@link Observable} which will emit a List of {@link EarthInfo}.
      */
-    Observable<List<EarthInfo>> getEarthInfo(String date);
+    void getEarthInfo(String date, final LoadInfoCallback callback);
+
+    void deleteAllInfo();
+    void saveTask(EarthInfo marbles);
+    void refreshTasks();
 
 }
