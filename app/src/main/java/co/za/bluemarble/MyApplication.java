@@ -4,6 +4,7 @@ import android.app.Application;
 
 import co.za.bluemarble.di.application.ApplicationComponent;
 import co.za.bluemarble.di.application.ApplicationModule;
+import co.za.bluemarble.di.application.DaggerApplicationComponent;
 
 
 public class MyApplication extends Application {

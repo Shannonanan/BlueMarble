@@ -2,6 +2,8 @@ package co.za.bluemarble.data.remote;
 
 import android.support.annotation.Nullable;
 
+import com.google.common.collect.Lists;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +21,7 @@ public class EpicRemoteDataSource implements EpicDataSource {
     private final NasaEpicApi mNasaEpicApi;
 
     @Nullable
-    private Call<List<EarthInfoSchema>> mCall;
+    private Call<List<EarthInfo>> mCall;
 
     public EpicRemoteDataSource(NasaEpicApi nasaEpicApi) {
         mNasaEpicApi = nasaEpicApi;
@@ -28,18 +30,21 @@ public class EpicRemoteDataSource implements EpicDataSource {
 
     @Override
     public void getEarthInfo(String date, LoadInfoCallback callback) {
+
+
         mCall = mNasaEpicApi.getEarthData(date);
-                    mCall.enqueue(new Callback<List<EarthInfoSchema>>() {
+                    mCall.enqueue(new Callback<List<EarthInfo>>() {
                         @Override
-                        public void onResponse(Call<List<EarthInfoSchema>> call, Response<List<EarthInfoSchema>> response) {
+                        public void onResponse(Call<List<EarthInfo>> call, Response<List<EarthInfo>> response) {
                             if (response.isSuccessful()) {
-                                List<EarthInfo> info = new ArrayList<>();
-                                info.addAll(earthinfoFromEarthInfoSchemas(response.body()));
-                                callback.onDataLoaded(info);
+                              //  List<EarthInfo> info = new ArrayList<>();
+                              //  info.addAll(earthinfoFromEarthInfoSchemas(response.body()));
+                              //  info.addAll(response.body());
+                                callback.onDataLoaded(Lists.newArrayList(response.body()));
                             }
                         }
                         @Override
-                        public void onFailure(Call<List<EarthInfoSchema>> call, Throwable t) {
+                        public void onFailure(Call<List<EarthInfo>> call, Throwable t) {
                            // emitter.onError(new NetworkConnectionException());
                             callback.onDataNotAvailable();
                         }

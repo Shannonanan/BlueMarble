@@ -32,6 +32,8 @@ import co.za.bluemarble.data.local.EpicLocalDataSource;
 import co.za.bluemarble.data.remote.EpicRemoteDataSource;
 import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfo;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 
 /**
  * Concrete implementation to load tasks from the data sources into a cache.
@@ -53,7 +55,7 @@ public class EpicRepository implements EpicDataSource {
     /**
      * This variable has package local visibility so it can be accessed from tests.
      */
-    Map<String, EarthInfo> mCachedEarthInfo;
+    public Map<String, EarthInfo> mCachedEarthInfo;
 
     /**
      * Marks the cache as invalid, to force an update the next time data is requested. This variable
@@ -151,7 +153,39 @@ public class EpicRepository implements EpicDataSource {
 
     @Override
     public void saveTask(EarthInfo marbles) {
+        checkNotNull(marbles);
+        mRemoteDataSource.saveTask(marbles);
+        mLocalDataSource.saveTask(marbles);
 
+        // Do in memory cache update to keep the app UI up to date
+        if (mCachedEarthInfo == null) {
+            mCachedEarthInfo = new LinkedHashMap<>();
+        }
+        mCachedEarthInfo.put(marbles.getIdentifier(), marbles);
+    }
+
+
+    /**
+     * Returns the single instance of this class, creating it if necessary.
+     *used for testing
+     * @param remoteDataSource the backend data source
+     * @param localDataSource  the device storage data source
+     * @return the {@link EpicRepository} instance
+     */
+    public static EpicRepository getInstance(EpicRemoteDataSource remoteDataSource,
+                                             EpicLocalDataSource localDataSource) {
+        if (INSTANCE == null) {
+            INSTANCE = new EpicRepository(remoteDataSource, localDataSource);
+        }
+        return INSTANCE;
+    }
+
+    /**
+     * Used to force {@link #getInstance(EpicRemoteDataSource, EpicLocalDataSource)} to create a new instance
+     * next time it's called.
+     */
+    public static void destroyInstance() {
+        INSTANCE = null;
     }
 
 

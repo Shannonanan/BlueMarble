@@ -14,7 +14,7 @@ import com.google.gson.annotations.SerializedName;
  */
 
 @Entity(tableName = "EarthInfo")
-public class EarthInfo {
+public final class EarthInfo {
 
     @PrimaryKey
     @NonNull

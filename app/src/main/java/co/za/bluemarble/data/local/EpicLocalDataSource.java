@@ -75,12 +75,17 @@ public class EpicLocalDataSource implements EpicDataSource {
 
     @Override
     public void saveTask(EarthInfo marbles) {
-            Runnable saveRunnable = () -> mEarthDao.insertInfo(marbles);
+            Runnable saveRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    mEarthDao.insertInfo(marbles);
+                }
+            };
             mAppExecutors.diskIO().execute(saveRunnable);
     }
 
     @Override
     public void refreshTasks() {
-        
+
     }
 }

@@ -4,10 +4,12 @@ import javax.inject.Singleton;
 
 import co.za.bluemarble.Constants;
 import co.za.bluemarble.data.remote.NasaEpicApi;
+import dagger.Module;
 import dagger.Provides;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+@Module
 public class NetworkingModule
 {
     @Singleton
