@@ -1,44 +1,55 @@
 package co.za.bluemarble.features.GetAllImages.domain.model;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class EarthInfo {
+/**
+ * Data Access Object for the EarthInfo table.
+ */
 
-    @SerializedName("identifier")
-    @Expose
+@Entity(tableName = "EarthInfo")
+public final class EarthInfo {
+
+    @PrimaryKey
+    @NonNull
+    @ColumnInfo(name = "identifier")
     private String identifier;
-    @SerializedName("caption")
-    @Expose
+
+    @Nullable
+    @ColumnInfo(name = "caption")
     private String caption;
-    @SerializedName("image")
-    @Expose
+
+    @Nullable
+    @ColumnInfo(name = "image")
     private String image;
-    @SerializedName("version")
-    @Expose
+
+    @Nullable
+    @ColumnInfo(name = "version")
     private String version;
-//    @SerializedName("centroid_coordinates")
-//    @Expose
-//    private CentroidCoordinates centroidCoordinates;
-//    @SerializedName("dscovr_j2000_position")
-//    @Expose
-//    private DscovrJ2000Position dscovrJ2000Position;
-//    @SerializedName("lunar_j2000_position")
-//    @Expose
-//    private LunarJ2000Position lunarJ2000Position;
-//    @SerializedName("sun_j2000_position")
-//    @Expose
-//    private SunJ2000Position sunJ2000Position;
-//    @SerializedName("attitude_quaternions")
-//    @Expose
-//    private AttitudeQuaternions attitudeQuaternions;
-    @SerializedName("date")
-    @Expose
+
+    @Nullable
+    @ColumnInfo(name = "date")
     private String date;
+
+    public EarthInfo(@NonNull String identifier, String caption, String image,
+                     String version, String date) {
+        this.identifier = identifier;
+        this.caption = caption;
+        this.image = image;
+        this.version = version;
+        this.date = date;
+    }
 //    @SerializedName("coords")
 //    @Expose
 //    private Coords coords;
 
+    @NonNull
     public String getIdentifier() {
         return identifier;
     }
@@ -47,6 +58,7 @@ public class EarthInfo {
         this.identifier = identifier;
     }
 
+    @NonNull
     public String getCaption() {
         return caption;
     }
@@ -55,6 +67,7 @@ public class EarthInfo {
         this.caption = caption;
     }
 
+    @NonNull
     public String getImage() {
         return image;
     }
@@ -63,6 +76,7 @@ public class EarthInfo {
         this.image = image;
     }
 
+    @NonNull
     public String getVersion() {
         return version;
     }
@@ -128,3 +142,20 @@ public class EarthInfo {
 //    }
 
 }
+
+
+//    @SerializedName("centroid_coordinates")
+//    @Expose
+//    private CentroidCoordinates centroidCoordinates;
+//    @SerializedName("dscovr_j2000_position")
+//    @Expose
+//    private DscovrJ2000Position dscovrJ2000Position;
+//    @SerializedName("lunar_j2000_position")
+//    @Expose
+//    private LunarJ2000Position lunarJ2000Position;
+//    @SerializedName("sun_j2000_position")
+//    @Expose
+//    private SunJ2000Position sunJ2000Position;
+//    @SerializedName("attitude_quaternions")
+//    @Expose
+//    private AttitudeQuaternions attitudeQuaternions;
