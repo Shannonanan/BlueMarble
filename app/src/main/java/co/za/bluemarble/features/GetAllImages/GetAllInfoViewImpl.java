@@ -4,13 +4,16 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
+import java.util.List;
+
+import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfo;
 import co.za.bluemarble.features.common.mvcviews.BaseViewMvc;
 
-public class GetAllImagesViewImpl extends BaseViewMvc<GetAllImagesContract.Listener>
-implements GetAllImagesContract.View{
+public class GetAllInfoViewImpl extends BaseViewMvc<GetAllInfoContract.Listener>
+implements GetAllInfoContract.View{
 
 
-    public GetAllImagesViewImpl(LayoutInflater inflater, ViewGroup container) {
+    public GetAllInfoViewImpl(LayoutInflater inflater, ViewGroup container) {
 
     }
 
@@ -20,7 +23,32 @@ implements GetAllImagesContract.View{
     }
 
     @Override
-    public void setPresenter(GetAllImagesContract.Presenter presenter) {
+    public void setLoadingIndicator(boolean active) {
+
+    }
+
+    @Override
+    public void showLoadingTasksError() {
+
+    }
+
+    @Override
+    public boolean isActive() {
+        return false;
+    }
+
+    @Override
+    public void showInfo(List<EarthInfo> info) {
+
+    }
+
+    @Override
+    public void showNoInfo() {
+
+    }
+
+    @Override
+    public void setPresenter(GetAllInfoContract.Presenter presenter) {
 
     }
 

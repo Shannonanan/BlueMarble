@@ -7,8 +7,8 @@ import android.view.ViewGroup;
 
 import javax.inject.Inject;
 
-import co.za.bluemarble.features.GetAllImages.GetAllImagesContract;
-import co.za.bluemarble.features.GetAllImages.GetAllImagesViewImpl;
+import co.za.bluemarble.features.GetAllImages.GetAllInfoContract;
+import co.za.bluemarble.features.GetAllImages.GetAllInfoViewImpl;
 import co.za.bluemarble.features.common.ImageLoader;
 
 public class ViewMvcFactory {
@@ -34,8 +34,8 @@ public class ViewMvcFactory {
 
         ViewMvc viewMvc;
 
-        if (mvcViewClass == GetAllImagesContract.class) {
-            viewMvc = new GetAllImagesViewImpl(mLayoutInflater, container);
+        if (mvcViewClass == GetAllInfoContract.class) {
+            viewMvc = new GetAllInfoViewImpl(mLayoutInflater, container);
         }
 
         else {

@@ -16,9 +16,6 @@
 
 package co.za.bluemarble.common;
 
-
-//import com.example.android.architecture.blueprints.todoapp.util.EspressoIdlingResource;
-
 import co.za.bluemarble.utils.EspressoIdlingResource;
 
 /**

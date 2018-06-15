@@ -47,7 +47,6 @@ public class EpicRepository implements EpicDataSource {
 
     private static EpicRepository INSTANCE = null;
 
-
     private final EpicRemoteDataSource mRemoteDataSource;
 
     private final EpicLocalDataSource mLocalDataSource;

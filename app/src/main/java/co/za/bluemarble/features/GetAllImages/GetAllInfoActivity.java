@@ -5,7 +5,7 @@ import android.os.Bundle;
 import co.za.bluemarble.R;
 import co.za.bluemarble.features.common.BaseActivity;
 
-public class GetAllImagesActivity extends BaseActivity implements GetAllImagesContract.Listener{
+public class GetAllInfoActivity extends BaseActivity implements GetAllInfoContract.Listener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

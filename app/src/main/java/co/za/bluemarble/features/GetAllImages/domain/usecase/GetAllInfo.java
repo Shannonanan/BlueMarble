@@ -45,6 +45,7 @@ public class GetAllInfo extends UseCase<GetAllInfo.RequestValues, GetAllInfo.Res
         private final String mDate;
 
         public RequestValues(boolean mForceUpdate, String mDate) {
+            //forced update is used in the presenter to decide to load tasks
             this.mForceUpdate = mForceUpdate;
             this.mDate = mDate;
         }
@@ -57,6 +58,7 @@ public class GetAllInfo extends UseCase<GetAllInfo.RequestValues, GetAllInfo.Res
         }
     }
 
+    //this is for your usecase callback
     public static final class ResponseValue implements UseCase.ResponseValue{
         private final List<EarthInfo> mEarthInfo;
 
