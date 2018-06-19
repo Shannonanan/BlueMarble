@@ -2,19 +2,19 @@ package co.za.bluemarble.data.local;
 
 import android.support.annotation.NonNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import co.za.bluemarble.data.EpicDataSource;
-import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfo;
+import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoObj;
 import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoSchema;
 import co.za.bluemarble.utils.AppExecutors;
-import io.reactivex.Observable;
-
 
 
 /**
  * Concrete implementation of a data source as a db.
  */
+
 public class EpicLocalDataSource implements EpicDataSource {
 
     private static volatile EpicLocalDataSource INSTANCE;
@@ -22,6 +22,7 @@ public class EpicLocalDataSource implements EpicDataSource {
     private EarthDao mEarthDao;
 
     private AppExecutors mAppExecutors;
+
 
     public EpicLocalDataSource(EarthDao mEarthDao, AppExecutors mAppExecutors) {
         this.mEarthDao = mEarthDao;
@@ -50,14 +51,15 @@ public class EpicLocalDataSource implements EpicDataSource {
             Runnable runnable = new Runnable() {
                 @Override
                 public void run() {
-                    final List<EarthInfo> info = mEarthDao.getEarthInfo();
+                    final List<EarthInfoObj> info = mEarthDao.getEarthInfo();
                     mAppExecutors.mainThread().execute(new Runnable() {
                         @Override
                         public void run() {
                             if (info.isEmpty()){
                                 callback.onDataNotAvailable();
                             }else {
-                                callback.onDataLoaded(info);
+
+                                callback.onDataLoaded(convertEntityToSchema(info));
                             }
                         }
                     });
@@ -67,6 +69,15 @@ public class EpicLocalDataSource implements EpicDataSource {
             mAppExecutors.diskIO().execute(runnable);
     }
 
+    private List<EarthInfoSchema> convertEntityToSchema(List<EarthInfoObj> earthInfoObj) {
+        List<EarthInfoSchema> info = new ArrayList<>(earthInfoObj.size());
+        for (EarthInfoObj schema : earthInfoObj) {
+            info.add(new EarthInfoSchema(schema.getIdentifier(),schema.getCaption(),schema.getImage(),
+                    schema.getVersion(), schema.getDate()));
+        }
+        return info;
+    }
+
     @Override
     public void deleteAllInfo() {
         Runnable deleteRunnable = () -> mEarthDao.deleteInfo();
@@ -74,7 +85,7 @@ public class EpicLocalDataSource implements EpicDataSource {
     }
 
     @Override
-    public void saveTask(EarthInfo marbles) {
+    public void saveTask(EarthInfoObj marbles) {
             Runnable saveRunnable = new Runnable() {
                 @Override
                 public void run() {

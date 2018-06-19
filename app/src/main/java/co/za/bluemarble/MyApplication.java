@@ -5,6 +5,7 @@ import android.app.Application;
 import co.za.bluemarble.di.application.ApplicationComponent;
 import co.za.bluemarble.di.application.ApplicationModule;
 import co.za.bluemarble.di.application.DaggerApplicationComponent;
+import co.za.bluemarble.di.application.RoomModule;
 
 
 public class MyApplication extends Application {
@@ -16,6 +17,7 @@ public class MyApplication extends Application {
         super.onCreate();
         mApplicationComponent = DaggerApplicationComponent.builder()
                 .applicationModule(new ApplicationModule(this))
+                .roomModule(new RoomModule(this))
                 .build();
     }
 

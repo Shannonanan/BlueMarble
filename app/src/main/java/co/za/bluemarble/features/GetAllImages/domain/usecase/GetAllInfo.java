@@ -5,8 +5,8 @@ import java.util.List;
 import co.za.bluemarble.common.UseCase;
 import co.za.bluemarble.data.EpicDataSource.LoadInfoCallback;
 import co.za.bluemarble.data.EpicRepository;
-import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfo;
-
+import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoObj;
+import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoSchema;
 
 
 public class GetAllInfo extends UseCase<GetAllInfo.RequestValues, GetAllInfo.ResponseValue> {
@@ -25,7 +25,7 @@ public class GetAllInfo extends UseCase<GetAllInfo.RequestValues, GetAllInfo.Res
 
         epicRepository.getEarthInfo(requestValues.mDate, new LoadInfoCallback() {
             @Override
-            public void onDataLoaded(List<EarthInfo> info) {
+            public void onDataLoaded(List<EarthInfoSchema> info) {
                 ResponseValue responseValue = new ResponseValue(info);
                 getUseCaseCallback().onSuccess(responseValue);
             }
@@ -60,14 +60,14 @@ public class GetAllInfo extends UseCase<GetAllInfo.RequestValues, GetAllInfo.Res
 
     //this is for your usecase callback
     public static final class ResponseValue implements UseCase.ResponseValue{
-        private final List<EarthInfo> mEarthInfo;
+        private List<EarthInfoSchema> mEarthInfoObj;
 
-        public ResponseValue(List<EarthInfo> mEarthInfo) {
-            this.mEarthInfo = mEarthInfo;
+        public ResponseValue(List<EarthInfoSchema> mEarthInfoObj) {
+            this.mEarthInfoObj = mEarthInfoObj;
         }
 
-        public List<EarthInfo> getInfo() {
-            return mEarthInfo;
+        public List<EarthInfoSchema> getInfo() {
+            return mEarthInfoObj;
         }
     }
 }

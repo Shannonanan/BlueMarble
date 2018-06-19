@@ -1,30 +1,76 @@
 package co.za.bluemarble.features.GetAllImages;
 
 import android.content.Context;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import java.util.List;
 
-import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfo;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import co.za.bluemarble.R;
+import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoObj;
+import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoSchema;
 import co.za.bluemarble.features.common.mvcviews.BaseViewMvc;
 
 public class GetAllInfoViewImpl extends BaseViewMvc<GetAllInfoContract.Listener>
-implements GetAllInfoContract.View{
+implements GetAllInfoContract{
 
+    @BindView(R.id.swiperRefresh) SwipeRefreshLayout refreshLayout;
+    @BindView(R.id.rv_AllImages) RecyclerView recyclerView;
+
+
+    private GetAllImagesAdapter getAllImagesAdapter;
 
     public GetAllInfoViewImpl(LayoutInflater inflater, ViewGroup container) {
+        View view = inflater.inflate(R.layout.activity_get_all_images, container, false);
+        setRootView(view);
+        ButterKnife.bind(this, view);
+
+
+//        setAppearance();
+//        refreshLayout.setOnRefreshListener(() -> updateViews());
+        setupAdapter();
+    }
+
+    void setupAdapter(){
+
+        getAllImagesAdapter = new GetAllImagesAdapter();
+        //recycler view setup
+        recyclerView.setLayoutManager(new LinearLayoutManager(applicationContext()));
+        recyclerView.setAdapter(getAllImagesAdapter);
 
     }
 
-    @Override
-    public void populateView() {
-
+    @OnClick(R.id.btn_load_data)
+    public  void loadData(){
+        for (Listener listener:getListeners()) {
+            listener.loadData();
+        }
     }
+
 
     @Override
     public void setLoadingIndicator(boolean active) {
-
+//        if (getView() == null) {
+//            return;
+//        }
+//        final SwipeRefreshLayout srl =
+//                (SwipeRefreshLayout) getView().findViewById(R.id.refresh_layout);
+//
+//        // Make sure setRefreshing() is called after the layout is done with everything else.
+//        srl.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                srl.setRefreshing(active);
+//            }
+//        });
     }
 
     @Override
@@ -38,19 +84,17 @@ implements GetAllInfoContract.View{
     }
 
     @Override
-    public void showInfo(List<EarthInfo> info) {
-
+    public void showInfo(List<EarthInfoSchema> info) {
+        if (info != null) {
+            this.getAllImagesAdapter.setInfoCollection(info);
+        }
     }
 
     @Override
     public void showNoInfo() {
-
+        Toast.makeText(getContext(), "No info to show", Toast.LENGTH_LONG).show();
     }
 
-    @Override
-    public void setPresenter(GetAllInfoContract.Presenter presenter) {
-
-    }
 
     @Override
     public void showLoading() {

@@ -10,7 +10,6 @@ import org.mockito.Captor;
 import org.mockito.InOrder;
 import org.mockito.Matchers;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.util.List;
@@ -20,20 +19,18 @@ import co.za.bluemarble.data.EpicDataSource;
 import co.za.bluemarble.data.EpicRepository;
 import co.za.bluemarble.features.GetAllImages.GetAllInfoContract;
 import co.za.bluemarble.features.GetAllImages.GetAllInfoPresenter;
-import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfo;
+import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoObj;
 import co.za.bluemarble.features.GetAllImages.domain.usecase.GetAllInfo;
 
-import static co.za.bluemarble.data.EpicDataSource.*;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class GellAllInfoPresenterTest {
 
-    private static List<EarthInfo> INFO;
+    private static List<EarthInfoObj> INFO;
 
     @Mock
     private EpicRepository mEpicRepository;
@@ -60,10 +57,10 @@ public class GellAllInfoPresenterTest {
         when(contractView.isActive()).thenReturn(true);
 
         INFO = Lists.newArrayList(
-                new EarthInfo("20180601010436",
+                new EarthInfoObj("20180601010436",
                         "This image was taken by NASA's EPIC camera onboard the NOAA DSCOVR spacecraft",
                         "epic_RGB_20180601010436", "02", "2018-06-01" ),
-                new EarthInfo("identifier",
+                new EarthInfoObj("identifier",
                         "caption", "image",
                         "version", "2018-06-01" ));
     }

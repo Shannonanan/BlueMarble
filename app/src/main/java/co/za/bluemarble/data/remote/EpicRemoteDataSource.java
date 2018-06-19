@@ -4,15 +4,22 @@ import android.support.annotation.Nullable;
 
 import com.google.common.collect.Lists;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import co.za.bluemarble.Constants;
 import co.za.bluemarble.data.EpicDataSource;
 import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfo;
+import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoObj;
 import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoSchema;
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class EpicRemoteDataSource implements EpicDataSource {
@@ -21,7 +28,7 @@ public class EpicRemoteDataSource implements EpicDataSource {
     private final NasaEpicApi mNasaEpicApi;
 
     @Nullable
-    private Call<List<EarthInfo>> mCall;
+    private Call<List<EarthInfoSchema>> mCall;
 
     public EpicRemoteDataSource(NasaEpicApi nasaEpicApi) {
         mNasaEpicApi = nasaEpicApi;
@@ -31,24 +38,24 @@ public class EpicRemoteDataSource implements EpicDataSource {
     @Override
     public void getEarthInfo(String date, LoadInfoCallback callback) {
 
+        mCall = mNasaEpicApi.getEarthData("2017-06-11", "2qbtLM8G62k7Um5iwKE7gTlPJKUyP67u4J7h9sUw");
+        mCall.enqueue(new Callback<List<EarthInfoSchema>>() {
+            @Override
+            public void onResponse(Call<List<EarthInfoSchema>> call, Response<List<EarthInfoSchema>> response) {
+                if (response.body() != null) {
+                    if (response.isSuccessful()) {
+                        List<EarthInfoSchema> info = new ArrayList<>();
+                        callback.onDataLoaded(response.body());
+                    }
+                }
+            }
 
-        mCall = mNasaEpicApi.getEarthData(date);
-                    mCall.enqueue(new Callback<List<EarthInfo>>() {
-                        @Override
-                        public void onResponse(Call<List<EarthInfo>> call, Response<List<EarthInfo>> response) {
-                            if (response.isSuccessful()) {
-                              //  List<EarthInfo> info = new ArrayList<>();
-                              //  info.addAll(earthinfoFromEarthInfoSchemas(response.body()));
-                              //  info.addAll(response.body());
-                                callback.onDataLoaded(Lists.newArrayList(response.body()));
-                            }
-                        }
-                        @Override
-                        public void onFailure(Call<List<EarthInfo>> call, Throwable t) {
-                           // emitter.onError(new NetworkConnectionException());
-                            callback.onDataNotAvailable();
-                        }
-                    });
+            @Override
+            public void onFailure(Call<List<EarthInfoSchema>> call, Throwable t) {
+                // emitter.onError(new NetworkConnectionException());
+                callback.onDataNotAvailable();
+            }
+        });
     }
 
     @Override
@@ -57,7 +64,7 @@ public class EpicRemoteDataSource implements EpicDataSource {
     }
 
     @Override
-    public void saveTask(EarthInfo marbles) {
+    public void saveTask(EarthInfoObj marbles) {
 
     }
 
@@ -67,10 +74,10 @@ public class EpicRemoteDataSource implements EpicDataSource {
     }
 
 
-    private List<EarthInfo> earthinfoFromEarthInfoSchemas(List<EarthInfoSchema> earthInfoSchemas) {
-        List<EarthInfo> info = new ArrayList<>(earthInfoSchemas.size());
+    private List<EarthInfoObj> earthinfoFromEarthInfoSchemas(List<EarthInfoSchema> earthInfoSchemas) {
+        List<EarthInfoObj> info = new ArrayList<>(earthInfoSchemas.size());
         for (EarthInfoSchema schema : earthInfoSchemas) {
-            info.add(new EarthInfo(schema.getIdentifier(),schema.getCaption(),schema.getImage(),
+            info.add(new EarthInfoObj(schema.getIdentifier(), schema.getCaption(), schema.getImage(),
                     schema.getVersion(), schema.getDate()));
         }
         return info;
@@ -91,7 +98,7 @@ public class EpicRemoteDataSource implements EpicDataSource {
 
 
 //
-//    public List<EarthInfo> getEarthInfo(String date, ) {
+//    public List<EarthInfoObj> getEarthInfo(String date, ) {
 //        return Observable.create(emitter -> {
 //            if (isThereInternetConnection()) {
 //                try {
@@ -101,7 +108,7 @@ public class EpicRemoteDataSource implements EpicDataSource {
 //                        @Override
 //                        public void onResponse(Call<List<EarthInfoSchema>> call, Response<List<EarthInfoSchema>> response) {
 //                            if (response.isSuccessful()) {
-//                                List<EarthInfo> info = new ArrayList<>();
+//                                List<EarthInfoObj> info = new ArrayList<>();
 //                                info.addAll(earthinfoFromEarthInfoSchemas(response.body()));
 //                                emitter.onNext(info);
 //                                emitter.onComplete();

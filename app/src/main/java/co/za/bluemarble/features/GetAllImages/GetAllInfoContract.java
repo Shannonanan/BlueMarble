@@ -2,9 +2,9 @@ package co.za.bluemarble.features.GetAllImages;
 
 import java.util.List;
 
-import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfo;
+import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoObj;
+import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoSchema;
 import co.za.bluemarble.features.common.mvcviews.BasePresenter;
-import co.za.bluemarble.features.common.mvcviews.BaseView;
 import co.za.bluemarble.features.common.mvcviews.ObservableViewMvc;
 
 /**
@@ -19,17 +19,17 @@ public interface GetAllInfoContract extends ObservableViewMvc<GetAllInfoContract
 
          void refresh();
          void getDetail();
+         void loadData();
     }
 
-    interface View extends BaseView<Presenter> {
+ //   interface View extends BaseView<Presenter> {
 
-        void populateView();
         void setLoadingIndicator(boolean active);
         void showLoadingTasksError();
         boolean isActive();
-        void showInfo(List<EarthInfo> info);
+        void showInfo(List<EarthInfoSchema> info);
         void showNoInfo();
-    }
+  //  }
 
     interface Presenter extends BasePresenter {
 

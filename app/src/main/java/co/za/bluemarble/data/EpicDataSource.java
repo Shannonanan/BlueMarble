@@ -16,7 +16,7 @@
 
 package co.za.bluemarble.data;
 import java.util.List;
-import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfo;
+import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoObj;
 import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoSchema;
 import io.reactivex.Observable;
 
@@ -32,25 +32,25 @@ public interface EpicDataSource {
 
     interface LoadInfoCallback {
 
-        void onDataLoaded(List<EarthInfo> info);
+        void onDataLoaded(List<EarthInfoSchema> info);
 
         void onDataNotAvailable();
     }
 
     interface GetInfoCallback {
 
-        void onInfoLoaded(EarthInfo info);
+        void onInfoLoaded(EarthInfoObj info);
 
         void onDataNotAvailable();
     }
 
     /**
-     * Get an {@link Observable} which will emit a List of {@link EarthInfo}.
+     * Get an {@link Observable} which will emit a List of {@link EarthInfoObj}.
      */
     void getEarthInfo(String date, final LoadInfoCallback callback);
 
     void deleteAllInfo();
-    void saveTask(EarthInfo marbles);
+    void saveTask(EarthInfoObj marbles);
     void refreshTasks();
 
 }

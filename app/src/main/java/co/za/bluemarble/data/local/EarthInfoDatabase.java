@@ -5,9 +5,9 @@ import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 
-import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfo;
+import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoObj;
 
-@Database(entities = {EarthInfo.class}, version = 1)
+@Database(entities = {EarthInfoObj.class}, version = 1)
 public abstract class EarthInfoDatabase extends RoomDatabase {
 
     private static EarthInfoDatabase INSTANCE;
@@ -20,7 +20,7 @@ public abstract class EarthInfoDatabase extends RoomDatabase {
         synchronized (sLock) {
             if (INSTANCE == null) {
                 INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                        EarthInfoDatabase.class, "EarthInfo.db")
+                        EarthInfoDatabase.class, "EarthInfoObj.db")
                         .build();
             }
             return INSTANCE;
