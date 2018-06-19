@@ -10,11 +10,12 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Data Access Object for the EarthInfo table.
+ * Data Access Object for the EarthInfoObj table.
  */
 
-@Entity(tableName = "EarthInfo")
-public final class EarthInfo {
+
+@Entity(tableName = "EarthInfoObj")
+public final class EarthInfoObj {
 
     @PrimaryKey
     @NonNull
@@ -37,8 +38,8 @@ public final class EarthInfo {
     @ColumnInfo(name = "date")
     private String date;
 
-    public EarthInfo(@NonNull String identifier, String caption, String image,
-                     String version, String date) {
+    public EarthInfoObj(@NonNull String identifier, String caption, String image,
+                        String version, String date) {
         this.identifier = identifier;
         this.caption = caption;
         this.image = image;
