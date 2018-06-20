@@ -1,18 +1,26 @@
 package co.za.bluemarble.data.remote;
 
+import android.graphics.Bitmap;
 import android.support.annotation.Nullable;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.google.common.collect.Lists;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import co.za.bluemarble.Constants;
 import co.za.bluemarble.data.EpicDataSource;
 import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfo;
 import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoObj;
+import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoPojos;
 import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoSchema;
+import co.za.bluemarble.features.common.ImageLoader;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
@@ -26,6 +34,7 @@ public class EpicRemoteDataSource implements EpicDataSource {
 
 
     private final NasaEpicApi mNasaEpicApi;
+     Bitmap bitmap;
 
     @Nullable
     private Call<List<EarthInfoSchema>> mCall;
@@ -36,16 +45,47 @@ public class EpicRemoteDataSource implements EpicDataSource {
 
 
     @Override
-    public void getEarthInfo(String date, LoadInfoCallback callback) {
+    public void getEarthInfo(ImageLoader imageLoader, String date, LoadInfoCallback callback) {
 
+        List<EarthInfoPojos> allEnhancedInfo = new ArrayList<>();
         mCall = mNasaEpicApi.getEarthData("2017-06-11", "2qbtLM8G62k7Um5iwKE7gTlPJKUyP67u4J7h9sUw");
         mCall.enqueue(new Callback<List<EarthInfoSchema>>() {
             @Override
             public void onResponse(Call<List<EarthInfoSchema>> call, Response<List<EarthInfoSchema>> response) {
                 if (response.body() != null) {
                     if (response.isSuccessful()) {
-                        List<EarthInfoSchema> info = new ArrayList<>();
-                        callback.onDataLoaded(response.body());
+                        allEnhancedInfo.addAll(convertSerilizableIntoPojo(response.body()));
+
+                        for (EarthInfoPojos pojo: allEnhancedInfo) {
+
+                            //get the date
+                            String getDate = pojo.getDate();
+                            String[] dateSplit = getDate.split("-");
+                            String year = dateSplit[0];
+                            String month = dateSplit[1];
+                            String dayHasTimeAttached = dateSplit[2];
+
+                            String dayWithoutTime = dayHasTimeAttached.substring(0, dayHasTimeAttached.indexOf(" "));
+
+                            String url = "https://api.nasa.gov/EPIC/archive/enhanced/" +
+                                    year + "/" + month + "/" + dayWithoutTime +
+                                    "/png/" + pojo.getImage() + ".png?api_key=2qbtLM8G62k7Um5iwKE7gTlPJKUyP67u4J7h9sUw";
+
+                            //save the url to get the image
+                            pojo.setImage(url);
+
+                           // encode the bitmap
+                            bitmap = imageLoader.loadImageIntoBitmap(url);
+                            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                            byte[] byteArray = stream.toByteArray();
+                            bitmap.recycle();
+
+                            pojo.setEnhancedEarthImage(byteArray);
+                        }
+
+
+                        callback.onDataLoaded(allEnhancedInfo);
                     }
                 }
             }
@@ -74,11 +114,12 @@ public class EpicRemoteDataSource implements EpicDataSource {
     }
 
 
-    private List<EarthInfoObj> earthinfoFromEarthInfoSchemas(List<EarthInfoSchema> earthInfoSchemas) {
-        List<EarthInfoObj> info = new ArrayList<>(earthInfoSchemas.size());
+    private List< EarthInfoPojos> convertSerilizableIntoPojo(List<EarthInfoSchema> earthInfoSchemas) {
+        //sets only the information that I want from the API
+        List<EarthInfoPojos> info = new ArrayList<>(earthInfoSchemas.size());
         for (EarthInfoSchema schema : earthInfoSchemas) {
-            info.add(new EarthInfoObj(schema.getIdentifier(), schema.getCaption(), schema.getImage(),
-                    schema.getVersion(), schema.getDate()));
+            info.add(new EarthInfoPojos(schema.getIdentifier(), schema.getCaption(), schema.getImage(),
+                    schema.getVersion(), schema.getDate(), null));
         }
         return info;
     }

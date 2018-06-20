@@ -3,11 +3,14 @@ package co.za.bluemarble.features.GetAllImages.domain.model;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
 
 /**
  * Data Access Object for the EarthInfoObj table.
@@ -38,13 +41,20 @@ public final class EarthInfoObj {
     @ColumnInfo(name = "date")
     private String date;
 
+
+    //Best is to store file locally into file system & only add reference entry in db.
+    @Nullable
+    @ColumnInfo(name = "enhanced_image_ref")
+    private byte[] enhanced_images;
+
     public EarthInfoObj(@NonNull String identifier, String caption, String image,
-                        String version, String date) {
+                        String version, String date, byte[] enhanced_images) {
         this.identifier = identifier;
         this.caption = caption;
         this.image = image;
         this.version = version;
         this.date = date;
+        this.enhanced_images = enhanced_images;
     }
 //    @SerializedName("coords")
 //    @Expose
@@ -86,6 +96,15 @@ public final class EarthInfoObj {
         this.version = version;
     }
 
+
+    @Nullable
+    public byte[] getEnhanced_images() {
+        return enhanced_images;
+    }
+
+    public void setEnhanced_images(@Nullable byte[] enhanced_images) {
+        this.enhanced_images = enhanced_images;
+    }
 //    public CentroidCoordinates getCentroidCoordinates() {
 //        return centroidCoordinates;
 //    }

@@ -6,15 +6,19 @@ import co.za.bluemarble.common.UseCase;
 import co.za.bluemarble.data.EpicDataSource.LoadInfoCallback;
 import co.za.bluemarble.data.EpicRepository;
 import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoObj;
+import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoPojos;
 import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoSchema;
+import co.za.bluemarble.features.common.ImageLoader;
 
 
 public class GetAllInfo extends UseCase<GetAllInfo.RequestValues, GetAllInfo.ResponseValue> {
 
     EpicRepository epicRepository;
+    ImageLoader imageLoader;
 
-    public GetAllInfo(EpicRepository epicRepository) {
+    public GetAllInfo(EpicRepository epicRepository, ImageLoader loader) {
         this.epicRepository = epicRepository;
+        this.imageLoader = loader;
     }
 
     @Override
@@ -23,9 +27,9 @@ public class GetAllInfo extends UseCase<GetAllInfo.RequestValues, GetAllInfo.Res
             epicRepository.refreshTasks();
         }
 
-        epicRepository.getEarthInfo(requestValues.mDate, new LoadInfoCallback() {
+        epicRepository.getEarthInfo(imageLoader,requestValues.mDate, new LoadInfoCallback() {
             @Override
-            public void onDataLoaded(List<EarthInfoSchema> info) {
+            public void onDataLoaded(List<EarthInfoPojos> info) {
                 ResponseValue responseValue = new ResponseValue(info);
                 getUseCaseCallback().onSuccess(responseValue);
             }
@@ -60,13 +64,13 @@ public class GetAllInfo extends UseCase<GetAllInfo.RequestValues, GetAllInfo.Res
 
     //this is for your usecase callback
     public static final class ResponseValue implements UseCase.ResponseValue{
-        private List<EarthInfoSchema> mEarthInfoObj;
+        private List<EarthInfoPojos> mEarthInfoObj;
 
-        public ResponseValue(List<EarthInfoSchema> mEarthInfoObj) {
+        public ResponseValue(List<EarthInfoPojos> mEarthInfoObj) {
             this.mEarthInfoObj = mEarthInfoObj;
         }
 
-        public List<EarthInfoSchema> getInfo() {
+        public List<EarthInfoPojos> getInfo() {
             return mEarthInfoObj;
         }
     }

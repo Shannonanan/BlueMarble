@@ -73,13 +73,13 @@ public class PresentationModule {
 
 
     @Provides
-    EpicRepository epicRepository(EpicRemoteDataSource mRemoteDataSource, EpicLocalDataSource mLocalDataSource) {
-        return new EpicRepository(mRemoteDataSource,mLocalDataSource);
+    EpicRepository epicRepository(EpicRemoteDataSource mRemoteDataSource, EpicLocalDataSource mLocalDataSource, ImageLoader imageLoader) {
+        return new EpicRepository(mRemoteDataSource,mLocalDataSource, imageLoader);
     }
 
     @Provides
-    GetAllInfo getAllInfoUseCase(EpicRepository epicRepository) {
-        return new GetAllInfo(epicRepository);
+    GetAllInfo getAllInfoUseCase(EpicRepository epicRepository, ImageLoader imageLoader) {
+        return new GetAllInfo(epicRepository, imageLoader);
     }
 
     @Provides

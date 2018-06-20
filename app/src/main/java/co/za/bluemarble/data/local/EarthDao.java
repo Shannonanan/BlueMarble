@@ -4,6 +4,8 @@ import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
+import android.graphics.Bitmap;
+
 import java.util.List;
 import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoObj;
 
@@ -32,4 +34,7 @@ public interface EarthDao {
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertInfo(EarthInfoObj task);
+
+
+
 }

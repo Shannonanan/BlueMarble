@@ -22,11 +22,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import co.za.bluemarble.data.local.EpicLocalDataSource;
 import co.za.bluemarble.data.remote.EpicRemoteDataSource;
 import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoObj;
-import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoSchema;
+import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoPojos;
+import co.za.bluemarble.features.common.ImageLoader;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -46,10 +48,13 @@ public class EpicRepository implements EpicDataSource {
 
     private final EpicLocalDataSource mLocalDataSource;
 
+    Context mContext;
+    ImageLoader imageLoader;
+
     /**
      * This variable has package local visibility so it can be accessed from tests.
      */
-    public Map<String, EarthInfoSchema> mCachedEarthInfo;
+    public Map<String, EarthInfoPojos> mCachedEarthInfo;
 
     /**
      * Marks the cache as invalid, to force an update the next time data is requested. This variable
@@ -58,15 +63,19 @@ public class EpicRepository implements EpicDataSource {
     private boolean mCacheIsDirty = false;
 
     public EpicRepository(EpicRemoteDataSource mRemoteDataSource,
-                          EpicLocalDataSource mLocalDataSource) {
+                          EpicLocalDataSource mLocalDataSource, ImageLoader imageLoader
+                        //  Context context
+    ) {
         this.mRemoteDataSource = mRemoteDataSource;
         this.mLocalDataSource = mLocalDataSource;
+      //  this.mContext = context;
+        this.imageLoader = imageLoader;
     }
 
 
     //check for data in the local repository if empty call to the network
     @Override
-    public void getEarthInfo(String date, final LoadInfoCallback callback) {
+    public void getEarthInfo(ImageLoader imageLoader, String date, final LoadInfoCallback callback) {
 
         // Respond immediately with cache if available and not dirty
         if (mCachedEarthInfo != null && !mCacheIsDirty) {
@@ -76,35 +85,34 @@ public class EpicRepository implements EpicDataSource {
 
         if (mCacheIsDirty) {
          //    If the cache is dirty we need to fetch new data from the network.
-            getAndSaveRemoteEarthInfo(date, callback);
+            getAndSaveRemoteEarthInfo(imageLoader, date, callback);
         }
         else {
             // Query the local storage if available. If not, query the network.
-            mLocalDataSource.getEarthInfo(date, new LoadInfoCallback() {
+            mLocalDataSource.getEarthInfo(imageLoader, date, new LoadInfoCallback() {
                 @Override
-                public void onDataLoaded(List<EarthInfoSchema> tasks) {
+                public void onDataLoaded(List<EarthInfoPojos> tasks) {
                     refreshCache(tasks);
                     callback.onDataLoaded(new ArrayList<>(mCachedEarthInfo.values()));
                 }
 
                 @Override
                 public void onDataNotAvailable() {
-                    getAndSaveRemoteEarthInfo(date, callback);
+                    getAndSaveRemoteEarthInfo(imageLoader,date, callback);
                 }
             });
 
         }
     }
 
-    private void getAndSaveRemoteEarthInfo(String date, @NonNull final LoadInfoCallback callback) {
-        mRemoteDataSource.getEarthInfo(date, new LoadInfoCallback() {
+    private void getAndSaveRemoteEarthInfo(ImageLoader loader, String date, @NonNull final LoadInfoCallback callback) {
+        mRemoteDataSource.getEarthInfo(loader, date, new LoadInfoCallback() {
             @Override
-            public void onDataLoaded(List<EarthInfoSchema> info) {
+            public void onDataLoaded(List<EarthInfoPojos> info) {
                 refreshCache(info);
                 refreshLocalDataSource(info);
                 callback.onDataLoaded(new ArrayList<>(mCachedEarthInfo.values()));
             }
-
             @Override
             public void onDataNotAvailable() {
                 callback.onDataNotAvailable();
@@ -112,18 +120,18 @@ public class EpicRepository implements EpicDataSource {
         });
     }
 
-    private void refreshCache(List<EarthInfoSchema> listInfo) {
+    private void refreshCache(List<EarthInfoPojos> listInfo) {
         if (mCachedEarthInfo == null) {
             mCachedEarthInfo = new LinkedHashMap<>();
         }
         mCachedEarthInfo.clear();
-        for (EarthInfoSchema info : listInfo) {
+        for (EarthInfoPojos info : listInfo) {
             mCachedEarthInfo.put(info.getIdentifier(), info);
         }
         mCacheIsDirty = false;
     }
 
-    private void refreshLocalDataSource(List<EarthInfoSchema> marbles) {
+    private void refreshLocalDataSource(List<EarthInfoPojos> marbles) {
         mLocalDataSource.deleteAllInfo();
         List<EarthInfoObj> marbless =  new ArrayList<>(convertSchemaToEntity(marbles));
         for (EarthInfoObj info : marbless) {
@@ -131,11 +139,11 @@ public class EpicRepository implements EpicDataSource {
         }
     }
 
-    private List<EarthInfoObj> convertSchemaToEntity(List<EarthInfoSchema> earthInfoSchema) {
+    private List<EarthInfoObj> convertSchemaToEntity(List<EarthInfoPojos> earthInfoSchema) {
         List<EarthInfoObj> info = new ArrayList<>(earthInfoSchema.size());
-        for (EarthInfoSchema schema : earthInfoSchema) {
+        for (EarthInfoPojos schema : earthInfoSchema) {
             info.add(new EarthInfoObj(schema.getIdentifier(),schema.getCaption(),schema.getImage(),
-                    schema.getVersion(), schema.getDate()));
+                    schema.getVersion(), schema.getDate(), schema.getEnhancedEarthImage()));
         }
         return info;
     }
@@ -168,9 +176,9 @@ public class EpicRepository implements EpicDataSource {
             mCachedEarthInfo = new LinkedHashMap<>();
         }
 
-        EarthInfoSchema schema = new EarthInfoSchema(marbles.getIdentifier(),
+        EarthInfoPojos schema = new EarthInfoPojos(marbles.getIdentifier(),
                 marbles.getCaption(),marbles.getImage(),
-                marbles.getVersion(), marbles.getDate());
+                marbles.getVersion(), marbles.getDate(), marbles.getEnhanced_images());
         mCachedEarthInfo.put(marbles.getIdentifier(), schema);
     }
 
@@ -182,15 +190,15 @@ public class EpicRepository implements EpicDataSource {
      * @return the {@link EpicRepository} instance
      */
     public static EpicRepository getInstance(EpicRemoteDataSource remoteDataSource,
-                                             EpicLocalDataSource localDataSource) {
+                                             EpicLocalDataSource localDataSource, ImageLoader imageLoader) {
         if (INSTANCE == null) {
-            INSTANCE = new EpicRepository(remoteDataSource, localDataSource);
+            INSTANCE = new EpicRepository(remoteDataSource, localDataSource, imageLoader);
         }
         return INSTANCE;
     }
 
     /**
-     * Used to force {@link #getInstance(EpicRemoteDataSource, EpicLocalDataSource)} to create a new instance
+     * Used to force {@link #getInstance(EpicRemoteDataSource, EpicLocalDataSource, ImageLoader)} to create a new instance
      * next time it's called.
      */
     public static void destroyInstance() {

@@ -7,6 +7,7 @@ import java.util.List;
 import co.za.bluemarble.common.UseCase;
 import co.za.bluemarble.common.UseCaseHandler;
 import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoObj;
+import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoPojos;
 import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoSchema;
 import co.za.bluemarble.features.GetAllImages.domain.usecase.GetAllInfo;
 
@@ -57,7 +58,7 @@ private String dated = "2018-06-01";
                 new UseCase.UseCaseCallback<GetAllInfo.ResponseValue>() {
                     @Override
                     public void onSuccess(GetAllInfo.ResponseValue response) {
-                        List<EarthInfoSchema> info = response.getInfo();
+                        List<EarthInfoPojos> info = response.getInfo();
                         // The view may not be able to handle UI updates anymore
 //                        if (!mInfoView.isActive()) {
 //                            return;
@@ -80,7 +81,7 @@ private String dated = "2018-06-01";
                 });
     }
 
-    private void processInfo(List<EarthInfoSchema> info) {
+    private void processInfo(List<EarthInfoPojos> info) {
         if (info.isEmpty()) {
             // Show a message indicating there is no info.
             mInfoView.showNoInfo();

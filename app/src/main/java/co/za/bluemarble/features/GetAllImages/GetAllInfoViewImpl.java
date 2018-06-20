@@ -16,7 +16,9 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import co.za.bluemarble.R;
 import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoObj;
+import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoPojos;
 import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoSchema;
+import co.za.bluemarble.features.common.ImageLoader;
 import co.za.bluemarble.features.common.mvcviews.BaseViewMvc;
 
 public class GetAllInfoViewImpl extends BaseViewMvc<GetAllInfoContract.Listener>
@@ -24,6 +26,8 @@ implements GetAllInfoContract{
 
     @BindView(R.id.swiperRefresh) SwipeRefreshLayout refreshLayout;
     @BindView(R.id.rv_AllImages) RecyclerView recyclerView;
+
+
 
 
     private GetAllImagesAdapter getAllImagesAdapter;
@@ -41,7 +45,7 @@ implements GetAllInfoContract{
 
     void setupAdapter(){
 
-        getAllImagesAdapter = new GetAllImagesAdapter();
+        getAllImagesAdapter = new GetAllImagesAdapter(getContext());
         //recycler view setup
         recyclerView.setLayoutManager(new LinearLayoutManager(applicationContext()));
         recyclerView.setAdapter(getAllImagesAdapter);
@@ -84,7 +88,7 @@ implements GetAllInfoContract{
     }
 
     @Override
-    public void showInfo(List<EarthInfoSchema> info) {
+    public void showInfo(List<EarthInfoPojos> info) {
         if (info != null) {
             this.getAllImagesAdapter.setInfoCollection(info);
         }

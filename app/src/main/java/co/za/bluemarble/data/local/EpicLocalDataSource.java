@@ -7,7 +7,9 @@ import java.util.List;
 
 import co.za.bluemarble.data.EpicDataSource;
 import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoObj;
+import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoPojos;
 import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoSchema;
+import co.za.bluemarble.features.common.ImageLoader;
 import co.za.bluemarble.utils.AppExecutors;
 
 
@@ -47,7 +49,7 @@ public class EpicLocalDataSource implements EpicDataSource {
      * or the table is empty.
      */
     @Override
-    public void getEarthInfo(String date, LoadInfoCallback callback) {
+    public void getEarthInfo(ImageLoader imageLoader, String date, LoadInfoCallback callback) {
             Runnable runnable = new Runnable() {
                 @Override
                 public void run() {
@@ -69,11 +71,11 @@ public class EpicLocalDataSource implements EpicDataSource {
             mAppExecutors.diskIO().execute(runnable);
     }
 
-    private List<EarthInfoSchema> convertEntityToSchema(List<EarthInfoObj> earthInfoObj) {
-        List<EarthInfoSchema> info = new ArrayList<>(earthInfoObj.size());
+    private List<EarthInfoPojos> convertEntityToSchema(List<EarthInfoObj> earthInfoObj) {
+        List<EarthInfoPojos> info = new ArrayList<>(earthInfoObj.size());
         for (EarthInfoObj schema : earthInfoObj) {
-            info.add(new EarthInfoSchema(schema.getIdentifier(),schema.getCaption(),schema.getImage(),
-                    schema.getVersion(), schema.getDate()));
+            info.add(new EarthInfoPojos(schema.getIdentifier(),schema.getCaption(),schema.getImage(),
+                    schema.getVersion(), schema.getDate(), schema.getEnhanced_images()));
         }
         return info;
     }
