@@ -5,8 +5,57 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
-    android:background="@color/colorBlack">
+    android:background="@drawable/nasaepicback">
 
 
+    <Button
+        android:id="@+id/btn_enhanced"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="76dp"
+        android:layout_marginRight="76dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/transparent"
+        android:fontFamily="@string/abel"
+        android:text="@string/enhanced"
+        android:textColor="@color/colorWhite"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.745" />
 
+    <Button
+        android:id="@+id/btn_natrual"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="76dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="76dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/transparent"
+        android:fontFamily="@string/abel"
+        android:text="@string/natural"
+        android:textColor="@color/colorWhiteLight"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_enhanced"
+        app:layout_constraintEnd_toStartOf="@+id/btn_enhanced"
+        app:layout_constraintHorizontal_bias="0.511"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/btn_enhanced"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.353"
+        app:srcCompat="@drawable/nasaepicearth" />
 </android.support.constraint.ConstraintLayout>

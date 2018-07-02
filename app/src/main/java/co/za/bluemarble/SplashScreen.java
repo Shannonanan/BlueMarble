@@ -21,7 +21,9 @@ public class SplashScreen extends AppCompatActivity {
 
 
         animationView = findViewById(R.id.animation_view);
-        animationView.setAnimation("loading.json");
+        animationView.setAnimation("loader.json");
+        animationView.setScaleX(3);
+        animationView.setScaleY(3);
         animationView.loop(true);
         animationView.playAnimation();
 
