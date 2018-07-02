@@ -1,21 +1,48 @@
 package co.za.bluemarble.features.GetAllImages.domain.model;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
 import android.graphics.Bitmap;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class EarthInfoPojos {
+/**
+ * Data Access Object for the EarthInfoObjEnhanced table.
+ */
 
 
+@Entity(tableName = "EarthInfoObjEnhanced")
+public final class EarthInfoObjEnhanced {
+
+    @PrimaryKey
+    @NonNull
+    @ColumnInfo(name = "identifier")
     private String identifier;
+
+    @Nullable
+    @ColumnInfo(name = "caption")
     private String caption;
+
+    @Nullable
+    @ColumnInfo(name = "image")
     private String image;
+
+    @Nullable
+    @ColumnInfo(name = "version")
     private String version;
+
+    @Nullable
+    @ColumnInfo(name = "date")
     private String date;
 
-
-    public EarthInfoPojos(String identifier, String caption, String image, String version,
-                          String date) {
+    public EarthInfoObjEnhanced(@NonNull String identifier, String caption, String image,
+                                String version, String date) {
         this.identifier = identifier;
         this.caption = caption;
         this.image = image;
@@ -23,7 +50,7 @@ public class EarthInfoPojos {
         this.date = date;
     }
 
-
+    @NonNull
     public String getIdentifier() {
         return identifier;
     }
@@ -32,6 +59,7 @@ public class EarthInfoPojos {
         this.identifier = identifier;
     }
 
+    @NonNull
     public String getCaption() {
         return caption;
     }
@@ -40,6 +68,7 @@ public class EarthInfoPojos {
         this.caption = caption;
     }
 
+    @NonNull
     public String getImage() {
         return image;
     }
@@ -48,6 +77,7 @@ public class EarthInfoPojos {
         this.image = image;
     }
 
+    @NonNull
     public String getVersion() {
         return version;
     }
@@ -62,6 +92,6 @@ public class EarthInfoPojos {
 
     public void setDate(String date) {
         this.date = date;
-    }
 
-}
+    }}
+

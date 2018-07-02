@@ -1,34 +1,34 @@
 package co.za.bluemarble.features.GetAllImages;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Environment;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import co.za.bluemarble.R;
-import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoObj;
 import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoPojos;
-import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoSchema;
-import co.za.bluemarble.features.common.ImageLoader;
 
 public class GetAllImagesAdapter extends RecyclerView.Adapter<GetAllImagesAdapter.GellAllImagesViewHolder> {
 
@@ -61,29 +61,22 @@ public class GetAllImagesAdapter extends RecyclerView.Adapter<GetAllImagesAdapte
 
         EarthInfoPojos earthInfoObj = this.infoCollection.get(position);
 
-        byte[] byteArrayEarthImage = earthInfoObj.getEnhancedEarthImage();
-        Bitmap bmp = BitmapFactory.decodeByteArray(byteArrayEarthImage, 0, byteArrayEarthImage.length);
-        holder.iv_enhanced.setImageBitmap(bmp);
+//        byte[] byteArrayEarthImage = earthInfoObj.getEnhancedEarthImage();
+//        Bitmap bmp = BitmapFactory.decodeByteArray(byteArrayEarthImage, 0, byteArrayEarthImage.length);
+         String url = earthInfoObj.getImage();
 
-//            String getDate = earthInfoObj.getDate();
-//            String[] dateSplit = getDate.split("-");
-//            String year = dateSplit[0];
-//            String month = dateSplit[1];
-//            String dayHasTimeAttached = dateSplit[2];
-//
-//            String dayWithoutTime = dayHasTimeAttached.substring(0, dayHasTimeAttached.indexOf(" "));
-//
-//            String url = "https://api.nasa.gov/EPIC/archive/enhanced/" +
-//                    year + "/" + month + "/" + dayWithoutTime +
-//                    "/png/" + earthInfoObj.getImage() + ".png?api_key=2qbtLM8G62k7Um5iwKE7gTlPJKUyP67u4J7h9sUw";
-//
-//            Glide.with(mContext)
-//                    .asBitmap()
-//                    .load(url)
-//                    .into(new SimpleTarget<Bitmap>() {
+
+
+            Glide.with(mContext)
+                    .load(url)
+                    .into(holder.iv_enhanced);
+
+        // .asBitmap()
+                            //(new SimpleTarget<Bitmap>() {
 //            @Override
 //            public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
-//
+//                holder.iv_enhanced.setImageBitmap(resource);
+//                saveImage(resource,earthInfoObj.getIdentifier());
 //            }
 //        });
 
@@ -127,5 +120,49 @@ public class GetAllImagesAdapter extends RecyclerView.Adapter<GetAllImagesAdapte
         if (infoCollection == null) {
             throw new IllegalArgumentException("The list cannot be null");
         }
+    }
+
+
+//    private void saveImage(Bitmap image, String imageIdentifier) {
+//        String savedImagePath = null;
+//
+//        String imageFileName = "JPEG_" + imageIdentifier + ".jpg";
+//        File storageDir = new File(mContext.getFilesDir(), "blueMarble");
+//        FileOutputStream outputStream;
+//
+//        try {
+//            outputStream = openFileOutput("blueMarble", Context.MODE_PRIVATE);
+//            outputStream.write(image.getBytes());
+//            outputStream.close();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        boolean success = true;
+//        if (!storageDir.exists()) {
+//            success = storageDir.mkdirs();
+//        }
+//        if (success) {
+//            File imageFile = new File(storageDir, imageFileName);
+//            savedImagePath = imageFile.getAbsolutePath();
+//            try {
+//                OutputStream fOut = new FileOutputStream(imageFile);
+//                image.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
+//                fOut.close();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+
+            // Add the image to the system gallery
+        //    galleryAddPic(savedImagePath);
+     //   }
+      //  return savedImagePath;
+  //  }
+
+    private void galleryAddPic(String imagePath) {
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        File f = new File(imagePath);
+        Uri contentUri = Uri.fromFile(f);
+        mediaScanIntent.setData(contentUri);
+        mContext.sendBroadcast(mediaScanIntent);
     }
 }

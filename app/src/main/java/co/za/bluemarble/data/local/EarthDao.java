@@ -4,27 +4,26 @@ import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
-import android.graphics.Bitmap;
 
 import java.util.List;
-import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoObj;
+import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoObjEnhanced;
 
 @Dao
 public interface EarthDao {
 
     /**
-     * Select all EarthInfoObj from the table.
+     * Select all EarthInfoObjEnhanced from the table.
      *
-     * @return all EarthInfoObj.
+     * @return all EarthInfoObjEnhanced.
      */
-    @Query("SELECT * FROM EarthInfoObj")
-    List<EarthInfoObj> getEarthInfo();
+    @Query("SELECT * FROM EarthInfoObjEnhanced")
+    List<EarthInfoObjEnhanced> getEarthInfo();
 
 
     /**
      * Delete all info.
      */
-    @Query("DELETE FROM EarthInfoObj")
+    @Query("DELETE FROM EarthInfoObjEnhanced")
     void deleteInfo();
 
     /**
@@ -33,7 +32,7 @@ public interface EarthDao {
      * @param task the task to be inserted.
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertInfo(EarthInfoObj task);
+    void insertInfo(EarthInfoObjEnhanced task);
 
 
 

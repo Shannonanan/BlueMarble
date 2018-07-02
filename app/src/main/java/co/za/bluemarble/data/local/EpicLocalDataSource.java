@@ -6,10 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import co.za.bluemarble.data.EpicDataSource;
-import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoObj;
+import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoObjEnhanced;
 import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoPojos;
-import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoSchema;
-import co.za.bluemarble.features.common.ImageLoader;
 import co.za.bluemarble.utils.AppExecutors;
 
 
@@ -49,11 +47,11 @@ public class EpicLocalDataSource implements EpicDataSource {
      * or the table is empty.
      */
     @Override
-    public void getEarthInfo(ImageLoader imageLoader, String date, LoadInfoCallback callback) {
+    public void getEarthInfo(String date, LoadInfoCallback callback) {
             Runnable runnable = new Runnable() {
                 @Override
                 public void run() {
-                    final List<EarthInfoObj> info = mEarthDao.getEarthInfo();
+                    final List<EarthInfoObjEnhanced> info = mEarthDao.getEarthInfo();
                     mAppExecutors.mainThread().execute(new Runnable() {
                         @Override
                         public void run() {
@@ -71,11 +69,11 @@ public class EpicLocalDataSource implements EpicDataSource {
             mAppExecutors.diskIO().execute(runnable);
     }
 
-    private List<EarthInfoPojos> convertEntityToSchema(List<EarthInfoObj> earthInfoObj) {
+    private List<EarthInfoPojos> convertEntityToSchema(List<EarthInfoObjEnhanced> earthInfoObj) {
         List<EarthInfoPojos> info = new ArrayList<>(earthInfoObj.size());
-        for (EarthInfoObj schema : earthInfoObj) {
+        for (EarthInfoObjEnhanced schema : earthInfoObj) {
             info.add(new EarthInfoPojos(schema.getIdentifier(),schema.getCaption(),schema.getImage(),
-                    schema.getVersion(), schema.getDate(), schema.getEnhanced_images()));
+                    schema.getVersion(), schema.getDate()));
         }
         return info;
     }
@@ -87,7 +85,7 @@ public class EpicLocalDataSource implements EpicDataSource {
     }
 
     @Override
-    public void saveTask(EarthInfoObj marbles) {
+    public void saveTask(EarthInfoObjEnhanced marbles) {
             Runnable saveRunnable = new Runnable() {
                 @Override
                 public void run() {

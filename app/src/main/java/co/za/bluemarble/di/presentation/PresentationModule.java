@@ -15,6 +15,7 @@ import co.za.bluemarble.data.EpicRepository;
 import co.za.bluemarble.data.local.EarthDao;
 import co.za.bluemarble.data.local.EpicLocalDataSource;
 import co.za.bluemarble.data.remote.EpicRemoteDataSource;
+import co.za.bluemarble.data.remote.LoadImageInterface;
 import co.za.bluemarble.data.remote.NasaEpicApi;
 import co.za.bluemarble.features.GetAllImages.GetAllInfoContract;
 import co.za.bluemarble.features.GetAllImages.GetAllInfoPresenter;
@@ -29,10 +30,21 @@ public class PresentationModule {
 
 
     private final FragmentActivity mActivity;
+  //  private LoadImageInterface imageInterface;
 
-    public PresentationModule(FragmentActivity fragmentActivity) {
+    public PresentationModule(FragmentActivity fragmentActivity)
+                             // LoadImageInterface loadImageInterface)
+    {
         mActivity = fragmentActivity;
+      //  imageInterface = loadImageInterface;
     }
+
+
+//    @Provides
+//    LoadImageInterface imageInterface(){
+//        return imageInterface;
+//    }
+
     @Provides
     LayoutInflater getLayoutInflater() {
         return LayoutInflater.from(mActivity);

@@ -5,9 +5,7 @@ import java.util.List;
 import co.za.bluemarble.common.UseCase;
 import co.za.bluemarble.data.EpicDataSource.LoadInfoCallback;
 import co.za.bluemarble.data.EpicRepository;
-import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoObj;
 import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoPojos;
-import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoSchema;
 import co.za.bluemarble.features.common.ImageLoader;
 
 
@@ -27,7 +25,7 @@ public class GetAllInfo extends UseCase<GetAllInfo.RequestValues, GetAllInfo.Res
             epicRepository.refreshTasks();
         }
 
-        epicRepository.getEarthInfo(imageLoader,requestValues.mDate, new LoadInfoCallback() {
+        epicRepository.getEarthInfo(requestValues.mDate, new LoadInfoCallback() {
             @Override
             public void onDataLoaded(List<EarthInfoPojos> info) {
                 ResponseValue responseValue = new ResponseValue(info);

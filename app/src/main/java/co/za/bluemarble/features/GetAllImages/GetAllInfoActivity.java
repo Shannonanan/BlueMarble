@@ -50,6 +50,7 @@ public class GetAllInfoActivity extends BaseActivity implements GetAllInfoContra
         super.onStart();
         this.getAllInfoPresenter.setView(mViewMvc);
         mViewMvc.registerListener(this);
+        getAllInfoPresenter.start();
 
 
     }
@@ -83,3 +84,4 @@ public class GetAllInfoActivity extends BaseActivity implements GetAllInfoContra
         getAllInfoPresenter.start();
     }
 }
+

@@ -6,9 +6,7 @@ import java.util.List;
 
 import co.za.bluemarble.common.UseCase;
 import co.za.bluemarble.common.UseCaseHandler;
-import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoObj;
 import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoPojos;
-import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoSchema;
 import co.za.bluemarble.features.GetAllImages.domain.usecase.GetAllInfo;
 
 public class GetAllInfoPresenter {

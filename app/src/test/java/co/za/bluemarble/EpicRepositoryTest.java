@@ -17,8 +17,10 @@ import co.za.bluemarble.data.EpicDataSource;
 import co.za.bluemarble.data.EpicRepository;
 import co.za.bluemarble.data.local.EpicLocalDataSource;
 import co.za.bluemarble.data.remote.EpicRemoteDataSource;
-import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoObj;
+import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoObjEnhanced;
+import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoPojos;
 import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoSchema;
+import co.za.bluemarble.features.common.ImageLoader;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
@@ -47,11 +49,11 @@ public class EpicRepositoryTest {
     private static final String TASK_DATE = "2018-06-01";
 
 
-    private static List<EarthInfoSchema> INFO = Lists.newArrayList(
-            new EarthInfoSchema("20180601010436",
+    private static List<EarthInfoPojos> INFO = Lists.newArrayList(
+            new EarthInfoPojos("20180601010436",
                     "This image was taken by NASA's EPIC camera onboard the NOAA DSCOVR spacecraft",
                     "epic_RGB_20180601010436", "02", "2018-06-01" ),
-            new EarthInfoSchema("identifier",
+            new EarthInfoPojos("identifier",
                     "caption", "image",
                     "version", "2018-06-01" ));
 
@@ -62,6 +64,9 @@ public class EpicRepositoryTest {
 
     @Mock
     private EpicLocalDataSource mEpicLocalDataSource;
+
+    @Mock
+    private ImageLoader mLoader;
 
     @Mock
     private EpicDataSource.LoadInfoCallback mLoadInfoCallback;
@@ -91,7 +96,7 @@ public class EpicRepositoryTest {
 
         // Get a reference to the class under test
         mEpicRepository = EpicRepository.getInstance(
-                mEpicRemoteDataSource, mEpicLocalDataSource);
+                mEpicRemoteDataSource, mEpicLocalDataSource,mLoader);
     }
 
     @After
@@ -122,7 +127,7 @@ public class EpicRepositoryTest {
     @Test
     public void saveTask_savesTaskToServiceAPI() {
         // Given a stub info with arguments
-        EarthInfoObj newInfo = new EarthInfoObj(TASK_IDENTIFIER, TASK_CAPTION,TASK_iMAGE,TASK_VERSION,TASK_DATE);
+        EarthInfoObjEnhanced newInfo = new EarthInfoObjEnhanced(TASK_IDENTIFIER, TASK_CAPTION,TASK_iMAGE,TASK_VERSION,TASK_DATE);
 
         // When earthInfo is saved to the EpicRespository repository
         mEpicRepository.saveTask(newInfo);
@@ -137,11 +142,11 @@ public class EpicRepositoryTest {
     @Test
     public void deleteAllInfo_deleteInfoToServiceAPIUpdatesCache(){
         // Given 3 stub completed tasks  in the repository
-        EarthInfoObj newInfo1 = new EarthInfoObj("identifier1","caption1","image1","version1","date1");
+        EarthInfoObjEnhanced newInfo1 = new EarthInfoObjEnhanced("identifier1","caption1","image1","version1","date1");
         mEpicRepository.saveTask(newInfo1);
-        EarthInfoObj newInfo2 = new EarthInfoObj("identifier2","caption2","image2","version2","date2");
+        EarthInfoObjEnhanced newInfo2 = new EarthInfoObjEnhanced("identifier2","caption2","image2","version2","date2");
         mEpicRepository.saveTask(newInfo2);
-        EarthInfoObj newInfo3 = new EarthInfoObj("identifier3","caption3","image3","version3","date3");
+        EarthInfoObjEnhanced newInfo3 = new EarthInfoObjEnhanced("identifier3","caption3","image3","version3","date3");
         mEpicRepository.saveTask(newInfo3);
 
         // When all tasks are deleted to the epic repository
@@ -210,7 +215,7 @@ public class EpicRepositoryTest {
         setInfoAvailable(mEpicRemoteDataSource, INFO);
 
         // Verify that the data fetched from the remote data source was saved in local.
-        verify(mEpicLocalDataSource, times(INFO.size())).saveTask(any(EarthInfoObj.class));
+        verify(mEpicLocalDataSource, times(INFO.size())).saveTask(any(EarthInfoObjEnhanced.class));
     }
 
     private void setInfoNotAvailable(EpicDataSource dataSource) {
@@ -219,7 +224,7 @@ public class EpicRepositoryTest {
     }
 
 
-    private void setInfoAvailable(EpicDataSource dataSource, List<EarthInfoSchema> info) {
+    private void setInfoAvailable(EpicDataSource dataSource, List<EarthInfoPojos> info) {
         verify(dataSource).getEarthInfo(Matchers.eq(dated), mLoadInfoCallbackCaptor.capture());
         mLoadInfoCallbackCaptor.getValue().onDataLoaded(info);
     }

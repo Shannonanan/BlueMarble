@@ -15,10 +15,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import co.za.bluemarble.R;
-import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoObj;
 import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoPojos;
-import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoSchema;
-import co.za.bluemarble.features.common.ImageLoader;
 import co.za.bluemarble.features.common.mvcviews.BaseViewMvc;
 
 public class GetAllInfoViewImpl extends BaseViewMvc<GetAllInfoContract.Listener>
@@ -50,13 +47,6 @@ implements GetAllInfoContract{
         recyclerView.setLayoutManager(new LinearLayoutManager(applicationContext()));
         recyclerView.setAdapter(getAllImagesAdapter);
 
-    }
-
-    @OnClick(R.id.btn_load_data)
-    public  void loadData(){
-        for (Listener listener:getListeners()) {
-            listener.loadData();
-        }
     }
 
 

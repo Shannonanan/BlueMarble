@@ -23,13 +23,12 @@ public class RoomModule {
 
     public RoomModule(Application mApplication) {
         this.earthInfoDatabase = Room.databaseBuilder(mApplication,EarthInfoDatabase.class,
-                "EarthInfoObj.db").build();
+                "EarthInfoObjEnhanced.db").build();
     }
 
     @Singleton
     @Provides
-    EarthInfoDatabase providesRoomDataBase()
-    {
+    EarthInfoDatabase providesRoomDataBase() {
         return earthInfoDatabase;
     }
 
