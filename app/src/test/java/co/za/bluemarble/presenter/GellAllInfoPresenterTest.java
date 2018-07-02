@@ -10,7 +10,6 @@ import org.mockito.Captor;
 import org.mockito.InOrder;
 import org.mockito.Matchers;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.util.List;
@@ -20,10 +19,11 @@ import co.za.bluemarble.data.EpicDataSource;
 import co.za.bluemarble.data.EpicRepository;
 import co.za.bluemarble.features.GetAllImages.GetAllInfoContract;
 import co.za.bluemarble.features.GetAllImages.GetAllInfoPresenter;
-import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfo;
+import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoObjEnhanced;
+import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoPojos;
 import co.za.bluemarble.features.GetAllImages.domain.usecase.GetAllInfo;
+import co.za.bluemarble.features.common.ImageLoader;
 
-import static co.za.bluemarble.data.EpicDataSource.*;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -33,13 +33,16 @@ import static org.mockito.Mockito.when;
 
 public class GellAllInfoPresenterTest {
 
-    private static List<EarthInfo> INFO;
+    private static List<EarthInfoPojos> INFO;
 
     @Mock
     private EpicRepository mEpicRepository;
 
     @Mock
-    private GetAllInfoContract.View contractView;
+    private GetAllInfoContract contractView;
+
+    @Mock
+    private ImageLoader mLoader;
 
     private String dated = "2018-06-01";
     @Captor
@@ -60,19 +63,19 @@ public class GellAllInfoPresenterTest {
         when(contractView.isActive()).thenReturn(true);
 
         INFO = Lists.newArrayList(
-                new EarthInfo("20180601010436",
+                new EarthInfoPojos("20180601010436",
                         "This image was taken by NASA's EPIC camera onboard the NOAA DSCOVR spacecraft",
                         "epic_RGB_20180601010436", "02", "2018-06-01" ),
-                new EarthInfo("identifier",
+                new EarthInfoPojos("identifier",
                         "caption", "image",
                         "version", "2018-06-01" ));
     }
 
     private GetAllInfoPresenter givenInfoPresenter() {
         UseCaseHandler useCaseHandler = new UseCaseHandler(new TestUseCaseScheduler());
-        GetAllInfo getAllInfo = new GetAllInfo(mEpicRepository);
+        GetAllInfo getAllInfo = new GetAllInfo(mEpicRepository, mLoader);
 
-        return new GetAllInfoPresenter(getAllInfo,useCaseHandler, contractView);
+        return new GetAllInfoPresenter(getAllInfo,useCaseHandler);
     }
 
     @Test
@@ -82,7 +85,7 @@ public class GellAllInfoPresenterTest {
 
 
         // Then the presenter is set to the view
-        verify(contractView).setPresenter(mGetAllInfoPresenter);
+        verify(mGetAllInfoPresenter).setView(contractView);
     }
 
     @Test

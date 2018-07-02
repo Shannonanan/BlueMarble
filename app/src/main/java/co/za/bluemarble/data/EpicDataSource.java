@@ -16,8 +16,8 @@
 
 package co.za.bluemarble.data;
 import java.util.List;
-import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfo;
-import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoSchema;
+import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoObjEnhanced;
+import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoPojos;
 import io.reactivex.Observable;
 
 /**
@@ -32,25 +32,25 @@ public interface EpicDataSource {
 
     interface LoadInfoCallback {
 
-        void onDataLoaded(List<EarthInfo> info);
+        void onDataLoaded(List<EarthInfoPojos> allEnhancedInfo);
 
         void onDataNotAvailable();
     }
 
     interface GetInfoCallback {
 
-        void onInfoLoaded(EarthInfo info);
+        void onInfoLoaded(EarthInfoObjEnhanced info);
 
         void onDataNotAvailable();
     }
 
     /**
-     * Get an {@link Observable} which will emit a List of {@link EarthInfo}.
+     * Get an {@link Observable} which will emit a List of {@link EarthInfoObjEnhanced}.
      */
     void getEarthInfo(String date, final LoadInfoCallback callback);
 
     void deleteAllInfo();
-    void saveTask(EarthInfo marbles);
+    void saveTask(EarthInfoObjEnhanced marbles);
     void refreshTasks();
 
 }

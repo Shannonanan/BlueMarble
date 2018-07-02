@@ -1,14 +1,13 @@
 package co.za.bluemarble.data.remote;
 
-import android.support.annotation.Nullable;
 
-import com.google.common.collect.Lists;
+import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import co.za.bluemarble.data.EpicDataSource;
-import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfo;
+import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoObjEnhanced;
+import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoPojos;
 import co.za.bluemarble.features.GetAllImages.domain.model.EarthInfoSchema;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -19,37 +18,88 @@ public class EpicRemoteDataSource implements EpicDataSource {
 
 
     private final NasaEpicApi mNasaEpicApi;
+//    LoadImageInterface loadImageInterface;
+//    byte[] byteArray = new byte[0];
+//    List<String> allUrls = new ArrayList<>();
+
+
 
     @Nullable
-    private Call<List<EarthInfo>> mCall;
+    private Call<List<EarthInfoSchema>> mCall;
 
-    public EpicRemoteDataSource(NasaEpicApi nasaEpicApi) {
+    public EpicRemoteDataSource(NasaEpicApi nasaEpicApi ) {
         mNasaEpicApi = nasaEpicApi;
     }
+
 
 
     @Override
     public void getEarthInfo(String date, LoadInfoCallback callback) {
 
+        List<EarthInfoPojos> allEnhancedInfo = new ArrayList<>();
 
-        mCall = mNasaEpicApi.getEarthData(date);
-                    mCall.enqueue(new Callback<List<EarthInfo>>() {
-                        @Override
-                        public void onResponse(Call<List<EarthInfo>> call, Response<List<EarthInfo>> response) {
-                            if (response.isSuccessful()) {
-                              //  List<EarthInfo> info = new ArrayList<>();
-                              //  info.addAll(earthinfoFromEarthInfoSchemas(response.body()));
-                              //  info.addAll(response.body());
-                                callback.onDataLoaded(Lists.newArrayList(response.body()));
-                            }
+        mCall = mNasaEpicApi.getEarthData("2017-06-11", "2qbtLM8G62k7Um5iwKE7gTlPJKUyP67u4J7h9sUw");
+        mCall.enqueue(new Callback<List<EarthInfoSchema>>() {
+            @Override
+            public void onResponse(Call<List<EarthInfoSchema>> call, Response<List<EarthInfoSchema>> response) {
+                if (response.body() != null) {
+                    if (response.isSuccessful()) {
+                        allEnhancedInfo.addAll(convertSerilizableIntoPojo(response.body()));
+
+                        for (EarthInfoPojos pojo: allEnhancedInfo) {
+
+                            //get the date
+                            String getDate = pojo.getDate();
+                            String[] dateSplit = getDate.split("-");
+                            String year = dateSplit[0];
+                            String month = dateSplit[1];
+                            String dayHasTimeAttached = dateSplit[2];
+
+                            String dayWithoutTime = dayHasTimeAttached.substring(0, dayHasTimeAttached.indexOf(" "));
+
+                            String url = "https://api.nasa.gov/EPIC/archive/enhanced/" +
+                                    year + "/" + month + "/" + dayWithoutTime +
+                                    "/png/" + pojo.getImage() + ".png?api_key=2qbtLM8G62k7Um5iwKE7gTlPJKUyP67u4J7h9sUw";
+
+                            //save the url to get the image later
+                            pojo.setImage(url);
+
+                           // allUrls.add(url);
                         }
-                        @Override
-                        public void onFailure(Call<List<EarthInfo>> call, Throwable t) {
-                           // emitter.onError(new NetworkConnectionException());
-                            callback.onDataNotAvailable();
-                        }
-                    });
+                        callback.onDataLoaded(allEnhancedInfo);
+                      //  getAllInfo(callback, allEnhancedInfo, allUrls);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<EarthInfoSchema>> call, Throwable t) {
+                // emitter.onError(new NetworkConnectionException());
+                callback.onDataNotAvailable();
+            }
+        });
     }
+
+//    public void getAllInfo(LoadInfoCallback callback, List<EarthInfoPojos> allEnhancedInfoo,
+//                           List<String> allUrls){
+//
+//
+//        loadImageInterface.getImages(allUrls, new LoadImageCallback() {
+//            @Override
+//            public void onImageLoaded(List<byte[]> allBitmaps ) {
+//               // allBitmaps.addAll(allEnhancedInfo);
+//                for(int i =0; i <= allEnhancedInfoo.size(); i ++) {
+//                    allEnhancedInfoo.get(i).setEnhancedEarthImage(allBitmaps.get(i));
+//                }
+//                callback.onDataLoaded(allEnhancedInfoo);
+//            }
+//
+//            @Override
+//            public void onImageNotAvailable() {
+//
+//            }
+//        });
+//    }
 
     @Override
     public void deleteAllInfo() {
@@ -57,7 +107,7 @@ public class EpicRemoteDataSource implements EpicDataSource {
     }
 
     @Override
-    public void saveTask(EarthInfo marbles) {
+    public void saveTask(EarthInfoObjEnhanced marbles) {
 
     }
 
@@ -67,10 +117,11 @@ public class EpicRemoteDataSource implements EpicDataSource {
     }
 
 
-    private List<EarthInfo> earthinfoFromEarthInfoSchemas(List<EarthInfoSchema> earthInfoSchemas) {
-        List<EarthInfo> info = new ArrayList<>(earthInfoSchemas.size());
+    private List< EarthInfoPojos> convertSerilizableIntoPojo(List<EarthInfoSchema> earthInfoSchemas) {
+        //sets only the information that I want from the API
+        List<EarthInfoPojos> info = new ArrayList<>(earthInfoSchemas.size());
         for (EarthInfoSchema schema : earthInfoSchemas) {
-            info.add(new EarthInfo(schema.getIdentifier(),schema.getCaption(),schema.getImage(),
+            info.add(new EarthInfoPojos(schema.getIdentifier(), schema.getCaption(), schema.getImage(),
                     schema.getVersion(), schema.getDate()));
         }
         return info;
@@ -87,39 +138,13 @@ public class EpicRemoteDataSource implements EpicDataSource {
 
         return isConnected;
     }
+
+//
+//    @Override
+//    public void getImages(List<String> allUrls, LoadImageCallback callback) {
+//
+//    }
+
 }
 
 
-//
-//    public List<EarthInfo> getEarthInfo(String date, ) {
-//        return Observable.create(emitter -> {
-//            if (isThereInternetConnection()) {
-//                try {
-//
-//                    mCall = mNasaEpicApi.getEarthData(date);
-//                    mCall.enqueue(new Callback<List<EarthInfoSchema>>() {
-//                        @Override
-//                        public void onResponse(Call<List<EarthInfoSchema>> call, Response<List<EarthInfoSchema>> response) {
-//                            if (response.isSuccessful()) {
-//                                List<EarthInfo> info = new ArrayList<>();
-//                                info.addAll(earthinfoFromEarthInfoSchemas(response.body()));
-//                                emitter.onNext(info);
-//                                emitter.onComplete();
-//                            }
-//                        }
-//
-//                        @Override
-//                        public void onFailure(Call<List<EarthInfoSchema>> call, Throwable t) {
-//                            emitter.onError(new NetworkConnectionException());
-//                        }
-//                    });
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                    emitter.onError(new Exception());
-//                }
-//            }
-//            else {
-//                emitter.onError(new NetworkConnectionException());
-//            }
-//        });
-//    }

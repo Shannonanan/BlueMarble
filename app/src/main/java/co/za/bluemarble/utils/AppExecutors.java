@@ -24,6 +24,8 @@ import android.support.annotation.VisibleForTesting;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import javax.inject.Inject;
+
 /**
  * Global executor pools for the whole application.
  * <p>
@@ -40,6 +42,7 @@ public class AppExecutors {
 
     private final Executor mainThread;
 
+    @Inject
     @VisibleForTesting
     AppExecutors(Executor diskIO, Executor networkIO, Executor mainThread) {
         this.diskIO = diskIO;
