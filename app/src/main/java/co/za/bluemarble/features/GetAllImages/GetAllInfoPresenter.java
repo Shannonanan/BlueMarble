@@ -45,9 +45,10 @@ private String dated = "2018-06-01";
     }
 
     private void loadInfo(boolean forceUpdate, final boolean showLoadingUI) {
-//        if (showLoadingUI) {
-//            mInfoView.setLoadingIndicator(true);
-//        }
+        if (showLoadingUI) {
+            mInfoView.showLoading();
+            mInfoView.setLoadingIndicator(true);
+        }
 
         GetAllInfo.RequestValues requestValue = new GetAllInfo.RequestValues(forceUpdate,
                 dated);
@@ -63,6 +64,7 @@ private String dated = "2018-06-01";
 //                        }
                         if (showLoadingUI) {
                             mInfoView.setLoadingIndicator(false);
+                            mInfoView.hideLoading();
                         }
 
                         processInfo(info);

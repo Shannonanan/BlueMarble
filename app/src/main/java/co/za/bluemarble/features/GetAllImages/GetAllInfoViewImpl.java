@@ -2,12 +2,16 @@ package co.za.bluemarble.features.GetAllImages;
 
 import android.content.Context;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
+
+import com.airbnb.lottie.LottieAnimationView;
 
 import java.util.List;
 
@@ -21,10 +25,11 @@ import co.za.bluemarble.features.common.mvcviews.BaseViewMvc;
 public class GetAllInfoViewImpl extends BaseViewMvc<GetAllInfoContract.Listener>
 implements GetAllInfoContract{
 
-    @BindView(R.id.swiperRefresh) SwipeRefreshLayout refreshLayout;
+
     @BindView(R.id.rv_AllImages) RecyclerView recyclerView;
-
-
+    @BindView(R.id.rl_progress_lottie) RelativeLayout rl_progress;
+    @BindView(R.id.animation_view) LottieAnimationView pb_progress;
+    private boolean isActive;
 
 
     private GetAllImagesAdapter getAllImagesAdapter;
@@ -44,7 +49,7 @@ implements GetAllInfoContract{
 
         getAllImagesAdapter = new GetAllImagesAdapter(getContext());
         //recycler view setup
-        recyclerView.setLayoutManager(new LinearLayoutManager(applicationContext()));
+        recyclerView.setLayoutManager(new GridLayoutManager(applicationContext(), 2));
         recyclerView.setAdapter(getAllImagesAdapter);
 
     }
@@ -52,7 +57,7 @@ implements GetAllInfoContract{
 
     @Override
     public void setLoadingIndicator(boolean active) {
-
+         isActive = active;
     }
 
     @Override
@@ -80,12 +85,14 @@ implements GetAllInfoContract{
 
     @Override
     public void showLoading() {
-
+        this.rl_progress.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void hideLoading() {
-
+        if (rl_progress != null) {
+            this.rl_progress.setVisibility(View.GONE);
+        }
     }
 
     @Override
